@@ -58,3 +58,6 @@ else
 ![Bubble](Renders/SplineResolution.png "Render.png")
 ## Open Loop
 ![Bubble](Renders/SplineLoop.png "Render.png")
+
+# Consider buying me a coffee if you like my work (click the image)
+[![Foo](Renders/coffee.png)](https://www.buymeacoffee.com/ZcRuWpUBf)
