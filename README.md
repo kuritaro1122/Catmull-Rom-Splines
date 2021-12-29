@@ -5,14 +5,13 @@
 
 [ICurve] https://github.com/kuritaro1122/Curve
 
-# Contains
-ICurve:
-	public interface ICurve {
-    		Vector3 GetPosition(float t, bool normalizedT = false);
-    		float GetCurveLength();
-    		int GetPointsNum();
-	}
-# Usage
+```
+public interface ICurve {
+    	Vector3 GetPosition(float t, bool normalizedT = false);
+    	float GetCurveLength();
+    	int GetPointsNum();
+}
+```
 
 # Catmull Rom Splines
 
