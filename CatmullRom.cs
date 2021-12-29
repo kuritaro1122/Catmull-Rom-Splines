@@ -32,7 +32,7 @@ namespace JPBotelho {
         private bool closedLoop;
         private CatmullRomPoint[] splinePoints; //Generated spline points
         private Vector3[] controlPoints;
-        private float curveLength = 0; //
+        //private float curveLength = 0; //
 
         //Returns spline points. Count is contorolPoints * resolution + [resolution] points if closed loop.
         public CatmullRomPoint[] GetPoints() {
@@ -69,9 +69,17 @@ namespace JPBotelho {
         }
 
         //ICurve
+        private float[] cumulativeLength;
+        private float totalLength;
         public Vector3 GetPosition(float t, bool normalizedT = false) {
-            if (!normalizedT) t /= this.curveLength;
-            float p = t * (this.splinePoints.Length - 1);
+            if (!normalizedT) t /= this.totalLength;
+            float T = 0f;
+            for (int i = 0; i < this.splinePoints.Length - 1; i++) {
+                if (t > CumulativeLengthPerc(i) || i == 0)
+                    T = LengthPerP(i) + (LengthPerP(i + 1) - LengthPerP(i)) / CumulativeDistancePerc(i, i + 1) * (t - CumulativeLengthPerc(i));
+                else break;
+            }
+            float p = T * (this.splinePoints.Length - 1);
             Vector3 pos = Vector3.zero;
             for (int i = 1; i < this.splinePoints.Length; i++) {
                 if (p >= i - 1) {
@@ -81,12 +89,20 @@ namespace JPBotelho {
                 }
             }
             return pos;
+            float LengthPerP(int i) => (float)i / (this.splinePoints.Length - 1);
+            float CumulativeLengthPerc(int index) => cumulativeLength[index] / totalLength;
+            float CumulativeDistancePerc(int index0, int index1) => CumulativeLengthPerc(index1) - CumulativeLengthPerc(index0);
         }
-        public float GetCurveLength() {
-            return this.curveLength;
-        }
-        public int GetPointsNum() {
-            return this.splinePoints.Length;
+        public float GetCurveLength() => this.totalLength;
+        public int GetPointsNum() => this.controlPoints.Length;
+
+        private void SetCumlativeLength() {
+            this.cumulativeLength = new float[this.splinePoints.Length];
+            for (int i = 1; i < this.splinePoints.Length; i++) {
+                float length = Vector3.Distance(this.splinePoints[i].position, this.splinePoints[i - 1].position);
+                this.cumulativeLength[i] += this.cumulativeLength[i - 1] + length;
+            }
+            this.totalLength = cumulativeLength[cumulativeLength.Length - 1];
         }
 
         //Updates control points
@@ -118,12 +134,8 @@ namespace JPBotelho {
                 for (int i = 0; i < splinePoints.Length; i++) {
                     if (i == splinePoints.Length - 1 && closedLoop) {
                         Debug.DrawLine(splinePoints[i].position, splinePoints[0].position, color);
-                        //Gizmos.color = color;
-                        //Gizmos.DrawLine(splinePoints[i].position, splinePoints[0].position);
                     } else if (i < splinePoints.Length - 1) {
                         Debug.DrawLine(splinePoints[i].position, splinePoints[i+1].position, color);
-                        //Gizmos.color = color;
-                        //Gizmos.DrawLine(splinePoints[i].position, splinePoints[i + 1].position);
                     }
                     Gizmos.DrawWireSphere(splinePoints[i].position, 1f);
                 }
@@ -133,8 +145,6 @@ namespace JPBotelho {
             if (ValidatePoints()) {
                 for (int i = 0; i < splinePoints.Length; i++) {
                     Debug.DrawLine(splinePoints[i].position, splinePoints[i].position + splinePoints[i].normal * extrusion, color);
-                    //Gizmos.color = color;
-                    //Gizmos.DrawLine(splinePoints[i].position, splinePoints[i].position + splinePoints[i].normal * extrusion);
                 }
             }
         }
@@ -142,8 +152,6 @@ namespace JPBotelho {
             if (ValidatePoints()) {
                 for (int i = 0; i < splinePoints.Length; i++) {
                     Debug.DrawLine(splinePoints[i].position, splinePoints[i].position + splinePoints[i].tangent * extrusion, color);
-                    //Gizmos.color = color;
-                    //Gizmos.DrawLine(splinePoints[i].position, splinePoints[i].position + splinePoints[i].tangent * extrusion);
                 }
             }
         }
@@ -227,18 +235,14 @@ namespace JPBotelho {
                     pointStep = 1.0f / (resolution - 1);  // last point of last segment should reach p1
                 }
 
-                float curveLength = 0;//###
-                Vector3 prevPos = this.splinePoints[0].position; //###
                 // Creates [resolution] points between this control point and the next
                 for (int tesselatedPoint = 0; tesselatedPoint < resolution; tesselatedPoint++) {
                     float t = tesselatedPoint * pointStep;
                     CatmullRomPoint point = Evaluate(p0, p1, m0, m1, t);
                     splinePoints[currentPoint * resolution + tesselatedPoint] = point;
-                    curveLength += Vector3.Distance(point.position, prevPos); //###
-                    prevPos = point.position;
                 }
-                this.curveLength = curveLength;
             }
+            SetCumlativeLength();
         }
 
         //Evaluates curve at t[0, 1]. Returns point/normal/tan struct. [0, 1] means clamped between 0 and 1.
