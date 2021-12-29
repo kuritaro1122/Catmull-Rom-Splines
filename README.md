@@ -1,9 +1,9 @@
 # Catmull Rom Spline with ICurve
 
-[ICurve] https://github.com/kuritaro1122/Curve
-
 このリポジトリのみでは機能しません。
 下記のURLからICurveとBaseCurveTesterをダウンロードするか、Curve/Scriptsの中にこのリポジトリを梱包してください。
+
+[ICurve] https://github.com/kuritaro1122/Curve
 
 # Catmull Rom Splines
 
