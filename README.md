@@ -5,6 +5,14 @@
 
 [ICurve] https://github.com/kuritaro1122/Curve
 
+ICurve:
+	public interface ICurve {
+    		Vector3 GetPosition(float t, bool normalizedT = false);
+    		float GetCurveLength();
+    		int GetPointsNum();
+	}
+
+
 # Catmull Rom Splines
 
 Organized catmull rom spline implementation in Unity.
