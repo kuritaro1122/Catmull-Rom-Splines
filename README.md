@@ -2,6 +2,8 @@
 
 [ICurve] https://github.com/kuritaro1122/Curve
 
+このリポジトリのみでは機能しません。下記のURLからICurveとBaseCurveTesterをダウンロードするか、Curve/Scriptsの中にこのリポジトリを梱包してください。
+
 # Catmull Rom Splines
 
 Organized catmull rom spline implementation in Unity.
