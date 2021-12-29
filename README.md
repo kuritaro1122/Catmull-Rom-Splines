@@ -1,3 +1,7 @@
+# Catmull Rom Spline with ICurve
+
+https://github.com/kuritaro1122/Curve
+
 # Catmull Rom Splines
 
 Organized catmull rom spline implementation in Unity.
