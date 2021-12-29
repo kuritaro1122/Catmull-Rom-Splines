@@ -1,6 +1,6 @@
 # Catmull Rom Spline with ICurve
 
-https://github.com/kuritaro1122/Curve
+[ICurve] https://github.com/kuritaro1122/Curve
 
 # Catmull Rom Splines
 
