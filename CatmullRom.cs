@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -95,6 +95,7 @@ namespace JPBotelho {
         }
         public float GetCurveLength() => this.totalLength;
         public int GetPointsNum() => this.controlPoints.Length;
+        public Vector3 GetPoint(int index) => this.controlPoints[index];
 
         private void SetCumlativeLength() {
             this.cumulativeLength = new float[this.splinePoints.Length];
